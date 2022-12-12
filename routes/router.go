@@ -18,8 +18,13 @@ func InitRouter() {
 
 	router := r.Group("api/v1")
 
-	router.GET("/stores", v1.GetStores)
-	router.POST("/store/add", v1.AddStore)
+	{
+		{ //门店配置
+			router.GET("/stores", Handler()(v1.GetStores))
+			router.POST("/store/add", Handler()(v1.AddStore))
+		}
+	}
+
 	err := r.Run(utils.HttpPort)
 	if err != nil {
 		panic(fmt.Sprintf("路由启动失败，请检查配置.%v", err))

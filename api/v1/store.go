@@ -3,33 +3,25 @@ package v1
 import (
 	"DineEasy/model"
 	"DineEasy/utils/errmsg"
+	"DineEasy/utils/tool"
 	"github.com/gin-gonic/gin"
 )
 
-func GetStores(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"code":    0,
-		"message": "ok",
-		"data":    []string{"store1", "store2"},
-	})
+// GetStores 获取门店列表
+func GetStores(c *gin.Context) (int, any) {
+	pageNum, pageSize := tool.PageTool(c)
+	code, data, count := model.GetStores(pageNum, pageSize)
+	return code, gin.H{"data": data, "count": count}
 }
 
 // AddStore 添加分店
-func AddStore(c *gin.Context) {
+func AddStore(c *gin.Context) (int, any) {
 	var data model.Store
-	err = c.ShouldBindJSON(data)
+	err = c.ShouldBindJSON(&data)
 	if err != nil {
 		code = errmsg.ERROR_BIND
-		c.JSON(200, gin.H{
-			"code":    code,
-			"message": errmsg.GetErrMsg(code),
-		})
-		return
+		return code, err
 	}
 	code, id := model.AddStore(&data)
-	c.JSON(200, gin.H{
-		"code":    code,
-		"message": errmsg.GetErrMsg(code),
-		"id":      id,
-	})
+	return code, &id
 }

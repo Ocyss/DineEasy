@@ -10,9 +10,9 @@ import (
 )
 
 type Model struct {
-	ID        uint      `gorm:"comment:主键ID;primarykey" json:"id"`
-	CreatedAt time.Time `json:"comment:创建时间;created_at"`
-	UpdatedAt time.Time `json:"comment:更新时间;updated_at"`
+	ID        uint      `gorm:"comment:主键ID;primarykey;" json:"id"`
+	CreatedAt time.Time `gorm:"comment:创建时间;" json:"created_at;"`
+	UpdatedAt time.Time `gorm:"comment:更新时间;" json:"updated_at;"`
 }
 
 var (
