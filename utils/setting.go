@@ -20,6 +20,13 @@ var (
 	DbName     string
 )
 
+var Qiniu = map[string]string{
+	"AccessKey":  "",
+	"SecretKey":  "",
+	"Bucket":     "",
+	"QiniuSever": "",
+}
+
 func init() {
 	file, err := ini.Load("conf/config.ini")
 	if err != nil {
@@ -27,6 +34,7 @@ func init() {
 	}
 	LoadServer(file)
 	LoadDatabase(file)
+	LoadQiniu(file)
 }
 
 func LoadServer(file *ini.File) {
@@ -40,4 +48,11 @@ func LoadDatabase(file *ini.File) {
 	DbUser = file.Section("database").Key("DbUser").MustString("DbUser")
 	DbPassword = file.Section("database").Key("DbPassword").MustString("DbPassword")
 	DbName = file.Section("database").Key("DbName").MustString("DbName")
+}
+
+func LoadQiniu(file *ini.File) {
+	Qiniu["AccessKey"] = file.Section("qiniu").Key("AccessKey").String()
+	Qiniu["SecretKey"] = file.Section("qiniu").Key("SecretKey").String()
+	Qiniu["Bucket"] = file.Section("qiniu").Key("Bucket").String()
+	Qiniu["QiniuSever"] = file.Section("qiniu").Key("QiniuSever").String()
 }

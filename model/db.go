@@ -40,7 +40,7 @@ func InitDb() {
 	if err != nil {
 		panic(fmt.Sprintf("数据库初始化配置失败,%s", err))
 	}
-	err = Db.AutoMigrate(&Store{}, &Member{}, &Cart{}, &Category{}, &Item{}, &Table{}, &Order{})
+	err = Db.AutoMigrate(&Store{}, &Member{}, &Category{}, &Item{}, &Cart{}, &Table{}, &Order{})
 	if err != nil {
 		panic(fmt.Sprintf("数据库迁移失败,%s", err))
 	}

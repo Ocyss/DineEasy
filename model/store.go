@@ -30,7 +30,7 @@ func GetStores(pageNum, pageSize int) (int, *[]Store, int64) {
 	var data []Store
 	var count int64
 	//根据偏移量获取数据
-	err := Db.Offset((pageNum - 1) * pageSize).Limit(pageSize).Find(&data).Error
+	err := Db.Where("Status!=?", 0).Offset((pageNum - 1) * pageSize).Limit(pageSize).Find(&data).Error
 	if err != nil {
 		return errmsg.ERROR, nil, 0
 	}

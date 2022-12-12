@@ -14,6 +14,8 @@ func GetStores(c *gin.Context) (int, any) {
 	return code, gin.H{"data": data, "count": count}
 }
 
+// GetStore 获取单个门店
+
 // AddStore 添加分店
 func AddStore(c *gin.Context) (int, any) {
 	var data model.Store
@@ -22,6 +24,9 @@ func AddStore(c *gin.Context) (int, any) {
 		code = errmsg.ERROR_BIND
 		return code, err
 	}
-	code, id := model.AddStore(&data)
-	return code, &id
+	return model.AddStore(&data)
 }
+
+// DelStore 删除门店
+
+// UpdateStore 修改门店
