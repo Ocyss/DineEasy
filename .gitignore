@@ -16,3 +16,4 @@ unpackage/
 1.text
 # python
 *.pyc
+.qiu
