@@ -14,37 +14,48 @@
         @click="selectStore(item)"
         :class="selectId == item.id ? 'select' : ''"
         v-for="item in storeDataRef"
-        :key="item">
+        :key="item.id">
         <view class="store-item-info">
           <view class="name">{{ item.name }}</view>
           <view class="type">
-            <view v-if="item.state.proofing">
+            <view v-if="item.status == 0">
+              <uni-tag
+                text="停业中"
+                type="default"
+                inverted="true"
+                size="mini" />
+            </view>
+            <view v-if="!isItOpen(item.start_time, item.end_time)">
               <uni-tag
                 text="打样中"
                 type="error"
                 inverted="true"
                 size="mini" />
             </view>
-            <view v-if="item.state.dineIn">
-              <uni-tag
-                text="可堂食"
-                type="success"
-                inverted="true"
-                size="mini" />
-            </view>
-            <view v-if="item.state.pickUp">
-              <uni-tag
-                text="可自提"
-                type="primary"
-                inverted="true"
-                size="mini" />
-            </view>
-            <view v-if="item.state.takeaway">
-              <uni-tag
-                text="可外卖"
-                type="warning"
-                inverted="true"
-                size="mini" />
+            <view
+              v-else
+              style="display: flex">
+              <view v-if="[1, 4, 5, 6].includes(item.status)">
+                <uni-tag
+                  text="可堂食"
+                  type="success"
+                  inverted="true"
+                  size="mini" />
+              </view>
+              <view v-if="[2, 4, 5, 7].includes(item.status)">
+                <uni-tag
+                  text="可自提"
+                  type="primary"
+                  inverted="true"
+                  size="mini" />
+              </view>
+              <view v-if="[3, 4, 6, 7].includes(item.status)">
+                <uni-tag
+                  text="可外卖"
+                  type="warning"
+                  inverted="true"
+                  size="mini" />
+              </view>
             </view>
           </view>
           <view class="address">
@@ -59,21 +70,21 @@
               custom-prefix="iconfont"
               type="icon-shijian"
               size="20" />
-            {{ item.startTime }}-{{ item.endTime }}
+            {{ hToMinute(item.start_time) }}-{{ hToMinute(item.end_time) }}
           </view>
         </view>
         <view class="store-item-operate">
           <view>去点单</view>
           <view class="jl">距离{{ item.distance }}米</view>
           <view class="operate">
-            <view>
+            <view @click.stop="callPhone(item.phone)">
               <uni-icons
                 color="#f0ad4e"
                 custom-prefix="iconfont"
                 type="icon-dianhuazhengzaibohao"
                 size="23" />
             </view>
-            <view>
+            <view @click.stop="toAddress(item.address)">
               <uni-icons
                 color="#f0ad4e"
                 custom-prefix="iconfont"
@@ -90,110 +101,12 @@
 <script setup>
   import { ref } from 'vue';
   import { useConfig } from '@/store/config.js';
-
+  import api from '@/api';
+  import { onLoad } from '@dcloudio/uni-app';
+  import { isItOpen, hToMinute } from '@/utils/index.js';
   const config = useConfig();
   const selectId = ref(config.Store.id);
-  //状态 0打样，1可堂食，2可自提，3可外卖
-  const storeDataRef = ref([
-    {
-      id: 1,
-      name: '三姐弟大南店',
-      state: {
-        proofing: false,
-        dineIn: true,
-        pickUp: true,
-        takeaway: false
-      },
-      startTime: '05:30',
-      endTime: '13:30',
-      address: '浙江省温州市鹿城区大南街146号',
-      distance: '1234'
-    },
-    {
-      id: 2,
-      name: '三姐弟大呃店',
-      state: {
-        proofing: false,
-        dineIn: true,
-        pickUp: true,
-        takeaway: false
-      },
-      startTime: '05:30',
-      endTime: '13:30',
-      address: '浙江省温州市鹿城区梨泰街146号',
-      distance: '645'
-    },
-    {
-      id: 3,
-      name: '三姐弟大被店',
-      state: {
-        proofing: false,
-        dineIn: true,
-        pickUp: true,
-        takeaway: false
-      },
-      startTime: '05:30',
-      endTime: '13:30',
-      address: '浙江省温州市鹿城区复打街146号',
-      distance: '789'
-    },
-    {
-      id: 4,
-      name: '三姐弟大都店',
-      state: {
-        proofing: false,
-        dineIn: true,
-        pickUp: true,
-        takeaway: false
-      },
-      startTime: '05:30',
-      endTime: '13:30',
-      address: '浙江省温州市鹿城区回放街146号',
-      distance: '45645'
-    },
-    {
-      id: 5,
-      name: '三姐弟大卡店',
-      state: {
-        proofing: false,
-        dineIn: true,
-        pickUp: true,
-        takeaway: false
-      },
-      startTime: '05:30',
-      endTime: '13:30',
-      address: '浙江省温州市鹿城区便宜街146号',
-      distance: '43123'
-    },
-    {
-      id: 6,
-      name: '三姐弟雪上店',
-      state: {
-        proofing: false,
-        dineIn: true,
-        pickUp: true,
-        takeaway: false
-      },
-      startTime: '05:30',
-      endTime: '13:30',
-      address: '浙江省温州市鹿城区集火街146号',
-      distance: '12345'
-    },
-    {
-      id: 7,
-      name: '三姐弟萨达店',
-      state: {
-        proofing: false,
-        dineIn: true,
-        pickUp: true,
-        takeaway: false
-      },
-      startTime: '05:30',
-      endTime: '13:30',
-      address: '浙江省温州市鹿城区大师街146号',
-      distance: '456'
-    }
-  ]);
+  const storeDataRef = ref([]);
   let inputTime = null;
 
   //搜索门店
@@ -214,21 +127,70 @@
   }
 
   function selectStore(item) {
+    if (item == 0) {
+      uni.showToast({
+        title: '该门店已闭店!',
+        icon: 'error',
+        duration: 2000
+      });
+      return;
+    } else if (!isItOpen(item.start_time, item.end_time)) {
+      uni.showToast({
+        title: '该门店不在营业哦!',
+        icon: 'error',
+        duration: 2000
+      });
+      return;
+    }
     if (item.id == selectId.value) {
+      config.Store.id = item.id;
+      config.Store.name = item.name;
+      config.Store.address = item.address;
       uni.switchTab({
         url: '/pages/order/order'
       });
     }
     selectId.value = item.id;
-    config.Store.id = item.id;
-    config.Store.name = item.name;
-    config.Store.address = item.address;
   }
+
+  function getStores(pagenum) {
+    api.store.getStores(pagenum, 6).then(res => {
+      if (res.code == 200) {
+        storeDataRef.value.push(...res.data);
+      }
+    });
+  }
+  function callPhone(num) {
+    uni.makePhoneCall({
+      phoneNumber: num,
+      success: res => {
+        console.log(res);
+      },
+      fail: err => {
+        console.log(err);
+      },
+      complet: result => {
+        console.log(result);
+      }
+    });
+  }
+  function toAddress(address) {
+    uni.openLocation({
+      latitude: 27.999081, //目标纬度
+      longitude: 120.692603, //目标经度
+      name: address, //名称
+      address: address, //地址
+      scale: 28
+    });
+  }
+
+  onLoad(() => {
+    //状态 0打样，1可堂食，2可自提，3可外卖
+    getStores(-1);
+  });
 </script>
 
 <style lang="scss">
-  @import '@/uni.scss';
-
   .store-list {
     display: flex;
     align-items: center;

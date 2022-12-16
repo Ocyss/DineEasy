@@ -1,17 +1,9 @@
 <script>
-	export default {
-		onLaunch: function() {
-			console.log('App Launch')
-		},
-		onShow: function() {
-			console.log('App Show')
-		},
-		onHide: function() {
-			console.log('App Hide')
-		}
-	}
+  export default {};
 </script>
 
-<style>
-	/*每个页面公共css */
+<style lang="scss">
+  /*每个页面公共css */
+  @import '@/uni.scss';
+  @import './static/iconfont.css';
 </style>

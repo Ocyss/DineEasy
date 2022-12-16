@@ -29,7 +29,7 @@
   .main {
     width: 93%;
     position: fixed;
-    bottom: 9%;
+    bottom: 12px;
     margin: 0 auto;
     left: 0;
     right: 0;
