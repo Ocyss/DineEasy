@@ -40,11 +40,15 @@ func InitDb() {
 	if err != nil {
 		panic(fmt.Sprintf("数据库初始化配置失败,%s", err))
 	}
-	err = Db.AutoMigrate(&Store{}, &Member{}, &Category{}, &Item{}, &Cart{}, &Table{}, &Order{})
+	err = Db.AutoMigrate(&Store{}, &Member{}, &Category{}, &Item{}, &Combo{}, &ComboGroup{}, &ComboGroupItem{}, &Cart{}, &Table{}, &Order{})
+
 	if err != nil {
 		panic(fmt.Sprintf("数据库迁移失败,%s", err))
 	}
-
+	err = Db.SetupJoinTable(&ComboGroup{}, "Items", &ComboGroupItem{})
+	if err != nil {
+		panic(fmt.Sprintf("修改表关联失败,%s", err))
+	}
 	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
 	sqlDB.SetMaxIdleConns(10)
 
