@@ -19,7 +19,7 @@ func Upload(c *gin.Context) (int, any) {
 
 	fileSize := fileHeader.Size
 	fileName := fileHeader.Filename
-	if class == "category" || class == "item" {
+	if class == "category" || class == "item" || class == "combo" {
 		now := time.Now()
 		uploadName := fmt.Sprintf("%s/%d%s", class, now.UnixNano(), path.Ext(fileName))
 		url, code := upload.QiniuUpload(uploadName, file, fileSize)

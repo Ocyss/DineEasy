@@ -24,7 +24,8 @@ func AddStore(c *gin.Context) (int, any) {
 		code = errmsg.ERROR_BIND
 		return code, err
 	}
-	return model.AddStore(&data)
+	code, storeID := model.AddStore(&data)
+	return code, gin.H{"store_id": storeID}
 }
 
 // DelStore 删除门店

@@ -14,7 +14,8 @@ func AddCategory(c *gin.Context) (int, any) {
 	if err != nil {
 		return errmsg.ERROR_BIND, err
 	}
-	return model.AddCategory(&data)
+	code, categoryID := model.AddCategory(&data)
+	return code, gin.H{"category_id": categoryID}
 }
 
 func GetCategorys(c *gin.Context) (int, any) {

@@ -15,7 +15,8 @@ func AddItem(c *gin.Context) (int, any) {
 	if err != nil {
 		return errmsg.ERROR_BIND, err
 	}
-	return model.AddItem(&data)
+	code, itemID := model.AddItem(&data)
+	return code, gin.H{"item_id": itemID}
 }
 
 // GetItems 获取单品列表
