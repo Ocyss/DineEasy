@@ -30,6 +30,10 @@ func InitRouter() {
 			router.POST("/item/add", Handler()(v1.AddItem))
 			router.GET("/items", Handler()(v1.GetItems))
 		}
+		{ //套餐接口
+			router.POST("/combo/add", Handler()(v1.AddCombo))
+			router.POST("/combo/del", Handler()(v1.DelCombo))
+		}
 		{ //门店配置
 			router.GET("/stores", Handler()(v1.GetStores))
 			router.POST("/store/add", Handler()(v1.AddStore))

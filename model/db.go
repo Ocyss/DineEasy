@@ -45,10 +45,7 @@ func InitDb() {
 	if err != nil {
 		panic(fmt.Sprintf("数据库迁移失败,%s", err))
 	}
-	err = Db.SetupJoinTable(&ComboGroup{}, "Items", &ComboGroupItem{})
-	if err != nil {
-		panic(fmt.Sprintf("修改表关联失败,%s", err))
-	}
+
 	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
 	sqlDB.SetMaxIdleConns(10)
 
