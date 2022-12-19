@@ -29,7 +29,7 @@
   .main {
     width: 93%;
     position: fixed;
-    bottom: 12px;
+    bottom: calc(var(--window-bottom) + 5px);
     margin: 0 auto;
     left: 0;
     right: 0;

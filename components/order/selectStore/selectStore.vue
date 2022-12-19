@@ -102,7 +102,7 @@
   import { ref } from 'vue';
   import { useConfig } from '@/store/config.js';
   import api from '@/api';
-  import { onLoad } from '@dcloudio/uni-app';
+  import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app';
   import { isItOpen, hToMinute } from '@/utils/index.js';
   const config = useConfig();
   const selectId = ref(config.Store.id);
@@ -146,19 +146,22 @@
       config.Store.id = item.id;
       config.Store.name = item.name;
       config.Store.address = item.address;
-      uni.switchTab({
-        url: '/pages/order/order'
-      });
+      uni.$emit('selectOK');
     }
     selectId.value = item.id;
   }
 
-  function getStores(pagenum) {
-    api.store.getStores(pagenum, 6).then(res => {
-      if (res.code == 200) {
-        storeDataRef.value.push(...res.data);
-      }
+  async function getStores(pagenum, pagesize) {
+    const res = await api.store.getStores(pagenum, pagesize);
+    if (res.code == 200) {
+      storeDataRef.value.push(...res.data);
+      return true;
+    }
+    uni.showToast({
+      title: '请检查网络!!',
+      icon: 'none'
     });
+    return false;
   }
   function callPhone(num) {
     uni.makePhoneCall({
@@ -186,7 +189,13 @@
 
   onLoad(() => {
     //状态 0打样，1可堂食，2可自提，3可外卖
-    getStores(-1);
+    getStores(-1, 6);
+  });
+  onPullDownRefresh(() => {
+    storeDataRef.value = [];
+    if (getStores(-1, 6)) {
+      uni.stopPullDownRefresh();
+    }
   });
 </script>
 

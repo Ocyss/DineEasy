@@ -1,42 +1,43 @@
 <template>
   <view>
-    <view class="search-input">
-      <uni-search-bar
-        @input="inputend"
-        cancelButton="none"
-        clearButton="auto"
-        placeholder="请输入关键词"
-        :radius="100" />
-    </view>
-    <view
-      class="store-data"
-      @click="selectStore">
-      <view class="left">
-        <view class="name">{{ config.Store.name }}</view>
-        <view class="address">{{ config.Store.address }}</view>
+    <SelectStoreVue v-if="!select_flag" />
+    <view v-else>
+      <view class="search-input">
+        <uni-search-bar
+          @input="inputend"
+          cancelButton="none"
+          clearButton="auto"
+          placeholder="请输入关键词"
+          :radius="100" />
       </view>
-      <view class="typeview"><button class="type">自提</button></view>
+      <view
+        class="store-data"
+        @click="select_flag = false">
+        <view class="left">
+          <view class="name">{{ config.Store.name }}</view>
+          <view class="address">{{ config.Store.address }}</view>
+        </view>
+        <view class="typeview"><button class="type">自提</button></view>
+      </view>
+      <view class="content">
+        <MenuVue />
+      </view>
+      <ChosenDishesVue />
     </view>
-    <view class="content">
-      <menuVue />
-    </view>
-    <ChosenDishesVue />
   </view>
 </template>
 
 <script setup>
   import { useConfig } from '@/store/config.js';
-  import { onLoad } from '@dcloudio/uni-app';
-  import menuVue from '@/components/menu/menu.vue';
-  import ChosenDishesVue from '@/components/menu/ChosenDishes.vue';
+  import { onLoad, onShow } from '@dcloudio/uni-app';
+  import MenuVue from '@/components/order/menu/menu.vue';
+  import ChosenDishesVue from '@/components/order/menu/ChosenDishes.vue';
+  import SelectStoreVue from '@/components/order/selectStore/selectStore.vue';
+  import { ref } from 'vue';
   const config = useConfig();
-
-  onLoad(() => {
-    if (config.Store.id == null) {
-      uni.redirectTo({
-        url: '/pages/order/selectStore/selectStore'
-      });
-    }
+  const select_flag = ref(false);
+  uni.$on('selectOK', function () {
+    select_flag.value = true;
   });
   let inputTime = null;
 
@@ -55,12 +56,6 @@
         value: val
       });
     }, 600);
-  }
-
-  function selectStore() {
-    uni.redirectTo({
-      url: '/pages/order/selectStore/selectStore'
-    });
   }
 </script>
 
@@ -90,7 +85,8 @@
 
     // 门店名称
     .name {
-      font-size: 1.1rem;
+      font-size: 1.3rem;
+      font-weight: 600;
       &::after {
         content: '﹥';
       }
@@ -98,7 +94,7 @@
 
     // 门店地址
     .address {
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       color: #797979;
     }
     //外卖类型

@@ -19,6 +19,7 @@
           mode="widthFix"></image>
         {{ item.name }}
       </view>
+      <view style="height: 200px" />
     </scroll-view>
     <scroll-view
       class="sub-menu"
@@ -46,16 +47,33 @@
           :key="dishesItem.id">
           <image
             class="dishesImage"
+            lazy-load
             :src="dishesItem.picture"
-            mode="widthFix"></image>
+            mode="aspectFill"></image>
           <view class="info">
-            <view class="name">{{ dishesItem.name }}</view>
+            <view>
+              <view class="name">{{ dishesItem.name }}</view>
+              <view class="description">
+                {{ dishesItem.description }}
+              </view>
+            </view>
             <view class="bo">
               <view class="jiage">
-                ￥{{ dishesItem.price }}
-                <span class="jiage-qi">起</span>
+                <text class="jiage-fh">￥</text>
+                <text>{{ dishesItem.price }}</text>
+                <text class="jiage-qi">&nbsp;起</text>
               </view>
-              <button class="jiagou">加购</button>
+              <button
+                v-if="dishesItem.combo_group"
+                size="mini"
+                class="jiagou">
+                选规格
+              </button>
+              <uni-icons
+                v-else
+                class="jh"
+                type="plus-filled"
+                size="35"></uni-icons>
             </view>
           </view>
         </view>
@@ -66,16 +84,19 @@
 
 <script setup>
   import { ref } from 'vue';
-  import { onLoad, onReady } from '@dcloudio/uni-app';
+  import { onLoad } from '@dcloudio/uni-app';
   import api from '@/api';
+  import { getCurrentInstance } from 'vue';
+
+  const instance = getCurrentInstance();
   const menuIdRef = ref(1);
   const menuScrollRef = ref(1);
   const dishesRef = ref([]);
   const tabRef = ref();
   function scroll({ detail: { scrollTop } }) {
     let offsetWindow = uni.getWindowInfo();
-
-    const query = uni.createSelectorQuery().in(this);
+    let leftHeight = 50;
+    const query = uni.createSelectorQuery().in(instance);
     dishesRef.value.forEach(item => {
       query
         .select('#tab-' + item.id)
@@ -95,6 +116,14 @@
     api.categort.getCategorys(true).then(res => {
       dishesRef.value = res.data;
     });
+    api.combo.getCombos().then(res => {
+      dishesRef.value.forEach(item => {
+        if (item.id == 1) {
+          item.items.push(...res.data);
+          return;
+        }
+      });
+    });
   });
 </script>
 
@@ -105,23 +134,32 @@
     overflow: hidden;
   }
   .menu {
-    width: 28%;
-    padding: 0px 10px 0px 0px;
+    width: 24%;
+    margin: 0px 10px 0px 0px;
     display: flex;
+    font-size: 0.9rem;
     justify-items: center;
     flex-direction: column;
     align-items: center;
-    background-color: rgb(246, 246, 246);
+    background-color: rgb(233, 233, 233);
     .active {
       background-color: #ffffff;
-      border-left: 8px solid $theme-color;
+    }
+    .active::after {
+      content: '';
+      background-color: $theme-color;
+      width: 6px;
+      height: 50px;
+      left: 0;
+      position: absolute;
     }
     .item {
       width: 100%;
       height: 50px;
       display: flex;
+      justify-content: center;
       align-items: center;
-      justify-content: left;
+      flex-direction: column;
       .menuImg {
         width: 25px;
       }
@@ -155,8 +193,10 @@
       height: 120px;
       display: flex;
       align-items: center;
+      margin-bottom: 10px;
       .dishesImage {
-        width: 60%;
+        width: 62%;
+        height: 120px;
         border-radius: 10px;
         margin: 8px;
       }
@@ -166,34 +206,45 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        padding: 0 5px 0 0;
       }
       .name {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: 600;
       }
+      .description {
+        font-size: 0.8rem;
+        color: #5f5f5f;
+      }
       .jiage {
-        height: 30px;
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: 550;
+        display: inline;
         .jiage-qi {
           font-size: 0.7rem;
           font-weight: 500;
+          color: #5f5f5f;
+        }
+        .jiage-fh {
+          font-size: 0.7rem;
         }
       }
       .bo {
         display: flex;
+        align-items: center;
         justify-content: space-between;
       }
       .jiagou {
-        height: 25px;
-        width: 48px;
-        font-size: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 50px;
+        margin: 0;
         background-color: $theme-color;
         color: #ffffff;
         padding: 0;
+        border-radius: 25px;
+      }
+      .jh {
+        color: $theme-color !important;
+        cursor: pointer;
       }
     }
   }
