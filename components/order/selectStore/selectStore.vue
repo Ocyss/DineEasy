@@ -100,12 +100,11 @@
 
 <script setup>
   import { ref } from 'vue';
-  import { useConfig } from '@/store/config.js';
   import api from '@/api';
   import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app';
   import { isItOpen, hToMinute } from '@/utils/index.js';
-  const config = useConfig();
-  const selectId = ref(config.Store.id);
+  const storeData = uni.getStorageSync('Store');
+  const selectId = ref(storeData.id);
   const storeDataRef = ref([]);
   let inputTime = null;
 
@@ -143,9 +142,7 @@
       return;
     }
     if (item.id == selectId.value) {
-      config.Store.id = item.id;
-      config.Store.name = item.name;
-      config.Store.address = item.address;
+      uni.setStorageSync('Store', { id: item.id, name: item.name, address: item.address });
       uni.$emit('selectOK');
     }
     selectId.value = item.id;

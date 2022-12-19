@@ -66,7 +66,8 @@
               <button
                 v-if="dishesItem.combo_group"
                 size="mini"
-                class="jiagou">
+                class="jiagou"
+                @click="selectNorm(dishesItem)">
                 选规格
               </button>
               <uni-icons
@@ -79,6 +80,12 @@
         </view>
       </view>
     </scroll-view>
+    <uni-popup
+      ref="popupRef"
+      background-color="#fff"
+      type="dialog">
+      <view class="popupContent"></view>
+    </uni-popup>
   </view>
 </template>
 
@@ -93,6 +100,7 @@
   const menuScrollRef = ref(1);
   const dishesRef = ref([]);
   const tabRef = ref();
+  const popupRef = ref();
   function scroll({ detail: { scrollTop } }) {
     let offsetWindow = uni.getWindowInfo();
     let leftHeight = 50;
@@ -112,6 +120,10 @@
         .exec();
     });
   }
+  function selectNorm(item) {
+    popupRef.value.open('center');
+  }
+
   onLoad(() => {
     api.categort.getCategorys(true).then(res => {
       dishesRef.value = res.data;
