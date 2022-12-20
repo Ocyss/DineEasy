@@ -29,7 +29,6 @@
       show-scrollbar="true"
       @scroll="scroll">
       <view
-        ref="tabRef"
         class="menuItem"
         v-for="menuItem in dishesRef"
         :id="'tab-' + menuItem.id"
@@ -67,40 +66,38 @@
                 v-if="dishesItem.combo_group"
                 size="mini"
                 class="jiagou"
-                @click="selectNorm(dishesItem)">
+                @click="normRef.selectNorm(dishesItem)">
                 选规格
               </button>
               <uni-icons
                 v-else
                 class="jh"
                 type="plus-filled"
+                @click="addPurchase(dishesItem)"
                 size="35"></uni-icons>
             </view>
           </view>
         </view>
       </view>
     </scroll-view>
-    <uni-popup
-      ref="popupRef"
-      background-color="#fff"
-      type="dialog">
-      <view class="popupContent"></view>
-    </uni-popup>
+    <selectNormVue ref="normRef" />
   </view>
 </template>
 
 <script setup>
   import { ref } from 'vue';
   import { onLoad } from '@dcloudio/uni-app';
-  import api from '@/api';
   import { getCurrentInstance } from 'vue';
 
+  import selectNormVue from '@/components/order/selectNorm.vue';
+  import api from '@/api';
   const instance = getCurrentInstance();
+
+  const normRef = ref(null);
   const menuIdRef = ref(1);
   const menuScrollRef = ref(1);
   const dishesRef = ref([]);
-  const tabRef = ref();
-  const popupRef = ref();
+
   function scroll({ detail: { scrollTop } }) {
     let offsetWindow = uni.getWindowInfo();
     let leftHeight = 50;
@@ -120,10 +117,9 @@
         .exec();
     });
   }
-  function selectNorm(item) {
-    popupRef.value.open('center');
+  function addPurchase(item) {
+    uni.$emit('addPurchase', item);
   }
-
   onLoad(() => {
     api.categort.getCategorys(true).then(res => {
       dishesRef.value = res.data;
@@ -141,6 +137,7 @@
 
 <style lang="scss" scoped>
   @import '@/uni.scss';
+
   .container {
     display: flex;
     overflow: hidden;
@@ -256,6 +253,9 @@
       }
       .jh {
         color: $theme-color !important;
+        :deep(text) {
+          color: $theme-color !important;
+        }
         cursor: pointer;
       }
     }

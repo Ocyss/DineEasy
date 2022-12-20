@@ -1,0 +1,18 @@
+{
+    "id": "tag-list",
+    "name": "多选、单选标签",
+    "displayName": "多选、单选标签",
+    "version": "1.0.0",
+    "description": "支持传入可选标签个数、单选",
+    "keywords": [
+        "标签",
+        "单选",
+        "多选"
+    ],
+    "dcloudext": {
+        "category": [
+            "前端组件",
+            "通用组件"
+        ]
+    }
+}

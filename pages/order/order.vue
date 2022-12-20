@@ -30,7 +30,7 @@
       <view class="content">
         <MenuVue />
       </view>
-      <ChosenDishesVue />
+      <settlementVue />
       <uni-popup
         ref="popup"
         :animation="false"
@@ -67,9 +67,9 @@
 
 <script setup>
   import { onLoad, onShow } from '@dcloudio/uni-app';
-  import MenuVue from '@/components/order/menu/menu.vue';
-  import ChosenDishesVue from '@/components/order/menu/ChosenDishes.vue';
-  import SelectStoreVue from '@/components/order/selectStore/selectStore.vue';
+  import MenuVue from '@/components/order/menu.vue';
+  import settlementVue from '@/components/order/settlement.vue';
+  import SelectStoreVue from '@/components/order/selectStore.vue';
   import { ref } from 'vue';
   const storeDataRef = ref(uni.getStorageSync('Store'));
   const DiningStyleRef = ref(
@@ -174,6 +174,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 25px 25px 0 0;
     .popup-button {
       width: 80%;
       :deep(uni-button) {
