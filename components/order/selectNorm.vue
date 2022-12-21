@@ -87,6 +87,9 @@
   const popupRef = ref();
   const seletedTagListRef = ref({
     id: 0,
+    name: '',
+    unit: '',
+    picture: '',
     price: 0,
     group: {},
     attach: 0,
@@ -96,6 +99,9 @@
     cGroup.value = item;
     seletedTagListRef.value = {
       id: cGroup.value.id,
+      name: cGroup.value.name,
+      unit: cGroup.value.unit,
+      picture: cGroup.value.picture,
       price: cGroup.value.price,
       group: {},
       attach: 0,
@@ -135,7 +141,10 @@
         return true;
       })
     ) {
-      uni.$emit('addPurchase', seletedTagListRef.value);
+      uni.$emit('addPurchase', {
+        type: 'combo',
+        data: seletedTagListRef.value
+      });
       closeNorm();
     }
   };
@@ -177,7 +186,7 @@
     justify-content: space-between;
     padding: 5px 20px;
     box-sizing: border-box;
-    box-shadow: 0px -20px 10px rgba(0, 0, 0, 0.9);
+    filter: drop-shadow(0 5px 10px #000);
     .button {
       display: flex;
       align-items: center;

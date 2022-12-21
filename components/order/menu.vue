@@ -118,7 +118,8 @@
     });
   }
   function addPurchase(item) {
-    uni.$emit('addPurchase', item);
+    item.attach = 0;
+    uni.$emit('addPurchase', { type: 'item', data: item });
   }
   onLoad(() => {
     api.categort.getCategorys(true).then(res => {
